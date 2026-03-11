@@ -501,6 +501,13 @@
             backdrop-filter: blur(8px);
         }
 
+        .tg-row {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
         .tg-input {
             display: block;
             width: 100%;
@@ -513,7 +520,6 @@
             color: #fff;
             outline: none;
             transition: border-color 0.18s;
-            margin-bottom: 12px;
             resize: none;
         }
 
@@ -528,6 +534,7 @@
 
         .tg-textarea {
             min-height: 110px;
+            margin-bottom: 12px;
         }
 
         .tg-btn {
@@ -692,10 +699,14 @@
                 <div class="divider"></div>
                 <div class="tg-form-wrap">
                     <form id="tgForm" onsubmit="sendTelegram(event)">
-                        <input class="tg-input" type="text" id="tgName" placeholder="Tên của bạn (không bắt buộc)"
-                            maxlength="60" autocomplete="off" />
-                        <textarea class="tg-input tg-textarea" id="tgMsg" placeholder="Nhắn gì đó đi..."
-                            maxlength="1000" required></textarea>
+                        <div class="tg-row">
+                            <input class="tg-input" type="text" id="tgName" placeholder="Tên của bạn (không bắt buộc)"
+                                maxlength="60" autocomplete="off" />
+                            <input class="tg-input" type="text" id="tgAmount" placeholder="10.000 (VNĐ)"
+                                autocomplete="off" oninput="formatCurrency(this)" />
+                        </div>
+                        <textarea class="tg-input tg-textarea" id="tgMsg"
+                            placeholder="Ví dụ đặt tên ABC vào trong game..." maxlength="1000" required></textarea>
                         <button class="tg-btn" type="submit" id="tgBtn">
                             <i class="far fa-paper-plane"></i>&nbsp; Gửi lời nhắn
                         </button>
@@ -710,7 +721,7 @@
         <footer>
             <p>© 2026 NguyeZ Gaming &nbsp;·&nbsp;
                 <a href="https://donate.nguyez.com">donate.nguyez.com</a> &nbsp;·&nbsp;
-                <a href="https://nguyez.com/">Thiết kế bởi NguyeZ</a>
+                <a href="mailto:ncn1992vn@gmail.com">ncn1992vn@gmail.com</a>
             </p>
         </footer>
 
@@ -733,21 +744,39 @@
                 }, 2000);
             });
         }
+        function formatCurrency(input) {
+            // Lấy giá trị hiện tại, bỏ tất cả dấu chấm và ký tự chữ cái
+            let val = input.value.replace(/\D/g, '');
+            if (val === '') {
+                input.value = '';
+                return;
+            }
+            // Định dạng lại theo chuẩn VNĐ (VD: 10000 -> 10.000)
+            input.value = new Intl.NumberFormat('vi-VN').format(val);
+        }
+
         async function sendTelegram(e) {
             e.preventDefault();
             const btn = document.getElementById('tgBtn');
             const result = document.getElementById('tgResult');
             const name = document.getElementById('tgName').value.trim();
             const msg = document.getElementById('tgMsg').value.trim();
+            const amount = document.getElementById('tgAmount').value.trim();
             if (!msg) return;
 
             // ── Đã cập nhật Worker URL ──────────
             const WORKER_URL = 'https://damp-smoke-deb8.ncn1992vn.workers.dev';
             // ─────────────────────────────────────────────────
 
-            const text = name
-                ? `\uD83D\uDCAC <b>${name}</b>\n\n${msg}\n\n<i>— donate.nguyez.com</i>`
-                : `\uD83D\uDCAC <i>Ẩn danh</i>\n\n${msg}\n\n<i>— donate.nguyez.com</i>`;
+            let text = name
+                ? `\uD83D\uDCAC <b>${name}</b>`
+                : `\uD83D\uDCAC <i>Ẩn danh</i>`;
+
+            if (amount) {
+                text += ` đã Donate: <b>${amount} VNĐ</b>`;
+            }
+
+            text += `\n\n${msg}\n\n<i>— donate.nguyez.com</i>`;
 
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>&nbsp; Đang gửi...';
