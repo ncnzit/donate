@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Donate | Ncn | NguyeZ Gaming</title>
-    <meta name="description" content="Ủng hộ kênh NguyeZ Gaming để tiếp tục tạo nội dung chất lượng.">
+    <meta name="description" content="Dư xiền thì mua game đi! Mua game còn dư hãy Donate">
     <link rel="icon" href="IMG/AVT-NguyeZGaming.png">
     <link rel="apple-touch-icon" href="IMG/AVT-NguyeZGaming.png">
 
@@ -492,6 +492,94 @@
             text-decoration: none;
         }
 
+        /* ─ TELEGRAM FORM ─────────────────────────────────── */
+        .tg-form-wrap {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 28px 28px 24px;
+            backdrop-filter: blur(8px);
+        }
+
+        .tg-input {
+            display: block;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 11px;
+            padding: 12px 16px;
+            font-size: 0.92rem;
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            outline: none;
+            transition: border-color 0.18s;
+            margin-bottom: 12px;
+            resize: none;
+        }
+
+        .tg-input::placeholder {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .tg-input:focus {
+            border-color: rgba(0, 200, 83, 0.5);
+            background: rgba(255, 255, 255, 0.09);
+        }
+
+        .tg-textarea {
+            min-height: 110px;
+        }
+
+        .tg-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #00c853, #00a843);
+            color: #fff;
+            border: none;
+            border-radius: 11px;
+            padding: 11px 26px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            margin-top: 4px;
+        }
+
+        .tg-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 200, 83, 0.4);
+        }
+
+        .tg-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .tg-result {
+            margin-top: 14px;
+            font-size: 0.85rem;
+            border-radius: 10px;
+            padding: 0;
+            transition: all 0.2s;
+        }
+
+        .tg-result.ok {
+            color: #4ade80;
+            padding: 10px 14px;
+            background: rgba(0, 200, 83, 0.1);
+            border: 1px solid rgba(0, 200, 83, 0.2);
+        }
+
+        .tg-result.err {
+            color: #f87171;
+            padding: 10px 14px;
+            background: rgba(248, 113, 113, 0.08);
+            border: 1px solid rgba(248, 113, 113, 0.2);
+        }
+
         /* ─ RESPONSIVE nav ───────────────────────────────── */
         @media (max-width: 560px) {
             .nav-menu a span {
@@ -602,11 +690,17 @@
                     <p>Để lại lời nhắn gì gì đó...</p>
                 </div>
                 <div class="divider"></div>
-                <div class="msg-placeholder">
-                    <div class="tg-icon">✈️</div>
-                    <div class="badge-soon">Sắp ra mắt</div>
-                    <h3>Nhắn tin qua Telegram Bot</h3>
-                    <p>Tính năng đang được thiết lập. Vui lòng liên hệ qua Email hoặc Discord trong thời gian này.</p>
+                <div class="tg-form-wrap">
+                    <form id="tgForm" onsubmit="sendTelegram(event)">
+                        <input class="tg-input" type="text" id="tgName" placeholder="Tên của bạn (không bắt buộc)"
+                            maxlength="60" autocomplete="off" />
+                        <textarea class="tg-input tg-textarea" id="tgMsg" placeholder="Nhắn gì đó đi..."
+                            maxlength="1000" required></textarea>
+                        <button class="tg-btn" type="submit" id="tgBtn">
+                            <i class="far fa-paper-plane"></i>&nbsp; Gửi lời nhắn
+                        </button>
+                    </form>
+                    <div class="tg-result" id="tgResult"></div>
                 </div>
             </section>
 
@@ -638,6 +732,50 @@
                     btn.innerHTML = orig;
                 }, 2000);
             });
+        }
+        async function sendTelegram(e) {
+            e.preventDefault();
+            const btn = document.getElementById('tgBtn');
+            const result = document.getElementById('tgResult');
+            const name = document.getElementById('tgName').value.trim();
+            const msg = document.getElementById('tgMsg').value.trim();
+            if (!msg) return;
+
+            // ── Đã cập nhật Worker URL ──────────
+            const WORKER_URL = 'https://damp-smoke-deb8.ncn1992vn.workers.dev';
+            // ─────────────────────────────────────────────────
+
+            const text = name
+                ? `\uD83D\uDCAC <b>${name}</b>\n\n${msg}\n\n<i>— donate.nguyez.com</i>`
+                : `\uD83D\uDCAC <i>Ẩn danh</i>\n\n${msg}\n\n<i>— donate.nguyez.com</i>`;
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>&nbsp; Đang gửi...';
+            result.className = 'tg-result';
+            result.textContent = '';
+
+            try {
+                const res = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text }),
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    result.className = 'tg-result ok';
+                    result.innerHTML = '✅ Tin nhắn đã gửi thành công!';
+                    document.getElementById('tgForm').reset();
+                } else {
+                    throw new Error(data.description);
+                }
+            } catch (err) {
+                result.className = 'tg-result err';
+                result.innerHTML = '❌ Gửi thất bại. Vui lòng thử lại.';
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="far fa-paper-plane"></i>&nbsp; Gửi lời nhắn';
+            }
         }
     </script>
 
