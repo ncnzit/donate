@@ -90,18 +90,32 @@
         }
 
         .nav-brand img {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid rgba(0, 200, 83, 0.55);
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
         }
 
         .nav-brand span {
             font-size: 0.95rem;
             font-weight: 800;
             letter-spacing: -0.3px;
-            background: linear-gradient(135deg, #fff 40%, #6ee7b7);
+        }
+
+        .txt-ncn {
+            background: linear-gradient(135deg, #4ade80, #00c853);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .txt-sep {
+            color: rgba(255, 255, 255, 0.4);
+            margin: 0 4px;
+            font-weight: 500;
+        }
+
+        .txt-ngz {
+            background: linear-gradient(135deg, #fbbf24, #f97316);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -181,13 +195,11 @@
         }
 
         .hero-avt {
-            width: 88px;
-            height: 88px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid rgba(0, 200, 83, 0.65);
-            box-shadow: 0 0 0 6px rgba(0, 200, 83, 0.1), 0 8px 28px rgba(0, 0, 0, 0.5);
-            margin-bottom: 18px;
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
         }
 
         .hero h1 {
@@ -612,7 +624,11 @@
             <div class="topnav-inner">
                 <a class="nav-brand" href="https://donate.nguyez.com">
                     <img src="IMG/AVT-NguyeZGaming.png" alt="NguyeZ">
-                    <span>NguyeZ Gaming</span>
+                    <span>
+                        <span class="txt-ncn">Ncn</span>
+                        <span class="txt-sep">|</span>
+                        <span class="txt-ngz">NguyeZ Gaming</span>
+                    </span>
                 </a>
 
                 <nav class="nav-menu">
@@ -706,7 +722,7 @@
                                 autocomplete="off" oninput="formatCurrency(this)" />
                         </div>
                         <textarea class="tg-input tg-textarea" id="tgMsg"
-                            placeholder="Ví dụ: yêu cầu chơi game nào đó hoặc đặt tên ABC vào trong game..." maxlength="1000" required></textarea>
+                            placeholder="Ví dụ đặt tên ABC vào trong game..." maxlength="1000" required></textarea>
                         <button class="tg-btn" type="submit" id="tgBtn">
                             <i class="far fa-paper-plane"></i>&nbsp; Gửi lời nhắn
                         </button>
@@ -768,15 +784,11 @@
             const WORKER_URL = 'https://damp-smoke-deb8.ncn1992vn.workers.dev';
             // ─────────────────────────────────────────────────
 
-            let text = name
-                ? `\uD83D\uDCAC <b>${name}</b>`
-                : `\uD83D\uDCAC <i>Ẩn danh</i>`;
-
-            if (amount) {
-                text += ` 💰 <b>${amount}</b>`;
-            }
-
-            text += `\n\n${msg}\n\n<i>— donate.nguyez.com</i>`;
+            const dataPayload = {
+                name: name || "Ẩn danh",
+                msg: msg,
+                amount: amount || ""
+            };
 
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>&nbsp; Đang gửi...';
@@ -787,7 +799,7 @@
                 const res = await fetch(WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text }),
+                    body: JSON.stringify(dataPayload),
                 });
                 const data = await res.json();
                 if (data.ok) {
