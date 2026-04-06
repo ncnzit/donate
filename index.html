@@ -235,13 +235,20 @@
             color: rgba(255, 255, 255, 0.55);
         }
 
-        /* ─ CARD GRID: luôn 2 cột ────────────────────────── */
+        /* ─ CARD GRID: tối đa 3 cột ────────────────────────── */
         .card-row {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
-            max-width: 740px;
+            max-width: 1000px;
             margin: 0 auto 70px;
+        }
+
+        @media (max-width: 800px) {
+            .card-row {
+                grid-template-columns: 1fr 1fr;
+                max-width: 640px;
+            }
         }
 
         @media (max-width: 500px) {
@@ -288,6 +295,10 @@
             background: linear-gradient(155deg, #ffb347, #f97316 50%, #c2440a);
         }
 
+        .bank.momo .card-img-block {
+            background: linear-gradient(155deg, #ff80df, #d82d8b 50%, #a50064);
+        }
+
         .profile-card-5 .card-img-block img.card-img-top {
             width: 100%;
             border-radius: 15px;
@@ -321,6 +332,13 @@
             box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
         }
 
+        .bank.momo .card-body {
+            background: linear-gradient(160deg, #1a0815, #10030a);
+            border: 1px solid rgba(216, 45, 139, 0.28);
+            border-top: none;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+        }
+
         /* Tên ngân hàng */
         .card-title {
             font-size: 0.72rem !important;
@@ -336,6 +354,10 @@
 
         .bank.mbbank .card-title {
             color: #fdba74;
+        }
+
+        .bank.momo .card-title {
+            color: #f472b6;
         }
 
         /* Tên chủ TK */
@@ -404,6 +426,16 @@
 
         .bank.mbbank .card-body button:hover {
             box-shadow: 0 4px 14px rgba(249, 115, 22, 0.45);
+            transform: scale(1.04);
+        }
+
+        .bank.momo .card-body button {
+            background: linear-gradient(135deg, #d82d8b, #a50064);
+            color: #fff;
+        }
+
+        .bank.momo .card-body button:hover {
+            box-shadow: 0 4px 14px rgba(216, 45, 139, 0.45);
             transform: scale(1.04);
         }
 
@@ -713,6 +745,23 @@
                                 <div class="stk-row">
                                     <input type="text" value="0888630360" id="stk-mb" readonly>
                                     <button onclick="copySTK('stk-mb', this)">
+                                        <i class="fas fa-copy"></i> Copy
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Momo -->
+                    <div class="bank momo">
+                        <div class="card profile-card-5">
+                            <div class="card-img-block">
+                                <img class="card-img-top" src="IMG/Momo-QR.jpg" alt="QR Momo">
+                            </div>
+                            <div class="card-body">
+                                <div class="stk-row">
+                                    <input type="text" value="0888630360" id="stk-momo" readonly>
+                                    <button onclick="copySTK('stk-momo', this)">
                                         <i class="fas fa-copy"></i> Copy
                                     </button>
                                 </div>
