@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hướng Dẫn Tạo Font Unity Cho BepInEx</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #334155; }
+        h1, h2, h3 { color: #0f172a; }
+        code { font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; }
+        .step-number { 
+            display: inline-flex; align-items: center; justify-content: center; 
+            width: 32px; height: 32px; border-radius: 50%; background-color: #3b82f6; 
+            color: white; font-weight: bold; margin-right: 12px;
+        }
+        /* Thay đổi class cho phù hợp với thẻ pre */
+        .code-block {
+            background-color: #1e293b; color: #f8fafc; padding: 1rem; 
+            border-radius: 0.5rem; overflow-x: auto; margin-top: 0.5rem; margin-bottom: 1rem;
+            white-space: pre-wrap; /* Cho phép tự động xuống dòng nếu code quá dài */
+            word-break: break-all;
+        }
+        .note-box {
+            background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 1rem;
+            margin: 1rem 0; border-radius: 0 0.5rem 0.5rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased pb-20">
+
+    <div class="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
+        <header class="border-b pb-6 mb-8 text-center">
+            <h1 class="text-3xl font-extrabold text-blue-700 mb-2">HƯỚNG DẪN TẠO FONT UNITY CHO BEPINEX</h1>
+            <p class="text-gray-600">Tài liệu chi tiết từng bước đóng gói Font (TextMeshPro) thành AssetBundle dùng cho Mod/Việt Hóa game Unity.</p>
+        </header>
+
+        <section class="mb-10">
+            <h2 class="text-2xl font-bold mb-4 flex items-center border-b pb-2"><span class="step-number">1</span> Chuẩn Bị Công Cụ</h2>
+            <ul class="list-disc pl-8 space-y-2 text-lg">
+                <li><strong>Unity Hub & Unity Editor:</strong> Bạn cần tải Unity Hub và cài đặt phiên bản Unity Editor <em>cùng phiên bản (hoặc gần giống nhất)</em> với tựa game bạn định mod. (Mẹo: Chuột phải vào file <code>.exe</code> của game -> Properties -> Details để xem version, hoặc dùng tool như UnityCrashHandler).</li>
+                <li><strong>File Font chữ:</strong> Một file font hỗ trợ tiếng Việt định dạng <code>.ttf</code> hoặc <code>.otf</code> (VD: Arial, Roboto, BeVietnamPro...).</li>
+                <li><strong>Môi trường code Mod:</strong> Đã setup sẵn project C# BepInEx.</li>
+            </ul>
+        </section>
+
+        <section class="mb-10">
+            <h2 class="text-2xl font-bold mb-4 flex items-center border-b pb-2"><span class="step-number">2</span> Tạo Project & Import Font</h2>
+            <div class="space-y-4 text-lg">
+                <p>1. Mở Unity Hub, tạo một Project mới (chọn mẫu <strong>3D Core</strong> hoặc <strong>2D Core</strong> đều được).</p>
+                <p>2. Chờ Unity load xong, tại cửa sổ <strong>Project</strong> (thường ở góc dưới), tạo một thư mục tên là <code>MyFonts</code>.</p>
+                <p>3. Kéo thả file <code>.ttf</code> hoặc <code>.otf</code> của bạn vào thư mục <code>MyFonts</code> vừa tạo trong Unity.</p>
+            </div>
+        </section>
+
+        <section class="mb-10">
+            <h2 class="text-2xl font-bold mb-4 flex items-center border-b pb-2"><span class="step-number">3</span> Tạo TextMeshPro Font Asset</h2>
+            <p class="mb-2 text-lg">Hầu hết các game Unity hiện đại đều dùng TextMeshPro (TMP) thay vì UI Text cũ. Do đó, ta cần tạo TMP Font Asset.</p>
+            
+            <div class="space-y-4 text-lg">
+                <p>1. Trên thanh menu trên cùng, chọn <strong>Window > TextMeshPro > Font Asset Creator</strong>.</p>
+                <p>2. Cửa sổ <em>Font Asset Creator</em> hiện ra, bạn cần thiết lập như sau:</p>
+                <ul class="list-disc pl-10 space-y-2 bg-gray-50 p-4 rounded-md">
+                    <li><strong>Source Font File:</strong> Kéo file font của bạn từ dưới thẻ Project thả vào ô này.</li>
+                    <li><strong>Sampling Point Size:</strong> Auto</li>
+                    <li><strong>Padding:</strong> 5 (hoặc 7, 9 tùy font).</li>
+                    <li><strong>Atlas Resolution:</strong> <code>4096 x 4096</code> (Rất quan trọng! Để size lớn mới đủ chỗ chứa hết ký tự tiếng Việt, nếu nhỏ quá chữ sẽ bị mất).</li>
+                    <li><strong>Character Set:</strong> Chọn <code>Custom Range</code>.</li>
+                    <li><strong>Character Sequence (Mã Unicode Tiếng Việt):</strong> Copy và dán chính xác dòng sau vào ô này:</li>
+                </ul>
+                
+                <!-- Sử dụng thẻ pre và code -->
+                <pre class="code-block"><code>32-126, 160-255, 258-259, 272-273, 296-297, 360-361, 416-417, 431-432, 7840-7929</code></pre>
+                
+                <p>3. Nhấn nút <strong>Generate Font Atlas</strong>. Đợi vài giây để Unity render ảnh.</p>
+                <p>4. Sau khi render xong (kiểm tra xem có ký tự nào bị <em>Missing</em> không, nếu missing nhiều tức là file font gốc không hỗ trợ tiếng Việt hoặc Atlas nhỏ quá), nhấn <strong>Save</strong> và lưu file với tên (ví dụ: <code>TiengVietFont.asset</code>) vào thư mục <code>MyFonts</code>.</p>
+            </div>
+        </section>
+
+        <section class="mb-10">
+            <h2 class="text-2xl font-bold mb-4 flex items-center border-b pb-2"><span class="step-number">4</span> Đóng Gói Thành AssetBundle</h2>
+            <p class="text-lg mb-4">BepInEx không thể đọc trực tiếp file <code>.asset</code> của Editor, mà phải thông qua AssetBundle.</p>
+            
+            <div class="space-y-4 text-lg">
+                <p>1. Chọn file <code>TiengVietFont.asset</code> vừa tạo ra.</p>
+                <p>2. Nhìn sang cột <strong>Inspector</strong> (bên phải màn hình), cuộn xuống tận cùng dưới cùng.</p>
+                <p>3. Tìm chỗ có chữ <strong>AssetBundle</strong>. Nhấp vào chữ <code>None</code> -> chọn <code>New...</code> và gõ tên bundle (viết liền không dấu, ví dụ: <code>vietnamese_font</code>). Cột bên cạnh (Variant) để trống.</p>
+                
+                <div class="note-box">
+                    <strong>Lưu ý:</strong> Unity mặc định không có nút "Bấm để tạo Bundle". Bạn phải dùng một đoạn script nhỏ để thêm nút này.
+                </div>
+
+                <p>4. Trong cửa sổ Project, tạo một thư mục tên là <code>Editor</code> (viết hoa chữ E).</p>
+                <p>5. Click chuột phải vào thư mục Editor > <strong>Create > C# Script</strong> (hoặc <strong>MonoBehaviour Script</strong> tùy phiên bản). Đặt tên là <code>BuildAssetBundle</code>.</p>
+                <p>6. Mở file đó lên và dán đoạn code sau vào, sau đó Save lại:</p>
+                
+<!-- Sử dụng thẻ pre và code -->
+<pre class="code-block"><code>using UnityEditor;
+using System.IO;
+
+public class BuildAssetBundle
+{
+    [MenuItem("Assets/Build AssetBundles")]
+    static void BuildAllAssetBundles()
+    {
+        string assetBundleDirectory = "Assets/AssetBundles";
+        if (!Directory.Exists(assetBundleDirectory))
+        {
+            Directory.CreateDirectory(assetBundleDirectory);
+        }
+        
+        /* Target Windows 64-bit (chỉnh sửa nếu game chạy HĐH khác) */
+        BuildPipeline.BuildAssetBundles(assetBundleDirectory, 
+                                        BuildAssetBundleOptions.None, 
+                                        BuildTarget.StandaloneWindows64);
+    }
+}</code></pre>
+
+                <p>7. Trở lại Unity, đợi script compile xong. Nhìn lên thanh Menu trên cùng, bạn sẽ thấy menu <strong>Assets > Build AssetBundles</strong>. Nhấn vào đó!</p>
+                
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 my-4 rounded-r-lg">
+                    <h4 class="font-bold text-red-700">⚠️ Xử lý lỗi: Nếu Menu "Build AssetBundles" không xuất hiện?</h4>
+                    <ul class="list-disc pl-5 mt-2 text-red-800 space-y-1 text-base">
+                        <li><strong>Chưa xóa trắng code cũ:</strong> Khi tạo file C# mới, Unity tự sinh ra code kế thừa MonoBehaviour. Bạn hãy <strong>xóa sạch 100%</strong> code trong file đó và dán lại đoạn code trên.</li>
+                        <li><strong>Lỗi biên dịch (Console Error):</strong> Mở thẻ <strong>Console</strong> (Window > General > Console). Nếu project của bạn đang có bất kỳ lỗi màu đỏ nào (dù ở file khác), Unity sẽ <strong>ngưng cập nhật UI/Menu</strong>. Hãy clear lỗi đó.</li>
+                        <li><strong>Nhấn Refresh:</strong> Bấm chuột vào màn hình Unity và nhấn <code>Ctrl + R</code> để ép phần mềm quét lại code.</li>
+                    </ul>
+                </div>
+
+                <p>8. Đợi chạy xong, vào thư mục project của bạn (Mở File Explorer), vào <code>Assets/AssetBundles</code>. File có tên <code>vietnamese_font</code> (không có đuôi .manifest) chính là file bạn cần copy vào mod.</p>
+            </div>
+        </section>
+
+        <section class="mb-10">
+            <h2 class="text-2xl font-bold mb-4 flex items-center border-b pb-2"><span class="step-number">5</span> Cách Load Font Bằng BepInEx Plugin (C#)</h2>
+            <p class="text-lg mb-4">Bây giờ bạn copy file <code>vietnamese_font</code> bỏ vào thư mục plugin của bạn. Dưới đây là code mẫu để load font và gán cho game:</p>
+
+<!-- Sử dụng thẻ pre và code -->
+<pre class="code-block"><code>using BepInEx;
+using UnityEngine;
+using TMPro; /* Nhớ tham chiếu (reference) đến Unity.TextMeshPro.dll */
+
+[BepInPlugin("com.yourname.modname", "Viet Hoa Font Mod", "1.0.0")]
+public class Plugin : BaseUnityPlugin
+{
+    public static TMP_FontAsset vnFont;
+
+    private void Awake()
+    {
+        /* 1. Load file AssetBundle từ đường dẫn */
+        /* Lấy thư mục chứa file dll của plugin hiện tại */
+        string bundlePath = System.IO.Path.Combine(Paths.PluginPath, "TênThưMụcModCủaBạn", "vietnamese_font");
+        
+        AssetBundle bundle = AssetBundle.LoadFromFile(bundlePath);
+        
+        if (bundle == null)
+        {
+            Logger.LogError("Không thể load AssetBundle!");
+            return;
+        }
+
+        /* 2. Load TMP_FontAsset từ Bundle ra bộ nhớ */
+        /* Tên "TiengVietFont" là tên của file .asset bạn đã lưu ở Bước 3 */
+        vnFont = bundle.LoadAsset&lt;TMP_FontAsset&gt;("TiengVietFont");
+
+        if (vnFont == null)
+        {
+            Logger.LogError("Không tìm thấy font trong Bundle!");
+        }
+        else
+        {
+            Logger.LogInfo("Load Font Thành Công!");
+            /* Giữ cho font không bị xóa khi chuyển cảnh */
+            DontDestroyOnLoad(vnFont); 
+        }
+
+        /* Đừng quên giải phóng bộ nhớ Bundle sau khi lấy xong font (chỉ Unload bundle, giữ lại asset) */
+        bundle.Unload(false);
+    }
+
+    /* Ví dụ cách áp dụng font vào game bằng phím tắt */
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            ApplyFontToAllTexts();
+        }
+    }
+
+    private void ApplyFontToAllTexts()
+    {
+        if (vnFont == null) return;
+
+        /* Tìm tất cả các TextMeshPro UI trong game hiện tại */
+        TextMeshProUGUI[] allTexts = Resources.FindObjectsOfTypeAll&lt;TextMeshProUGUI&gt;();
+        foreach (var text in allTexts)
+        {
+            /* 1. Lưu lại shader gốc của game đang dùng */
+            Shader originalShader = null;
+            if (text.fontSharedMaterial != null)
+            {
+                originalShader = text.fontSharedMaterial.shader;
+            }
+
+            /* 2. Đổi font và material */
+            text.font = vnFont;
+            text.fontSharedMaterial = vnFont.material; 
+
+            /* 3. Phủ lại shader gốc lên font mới để xóa lớp sương mờ */
+            if (originalShader != null && text.fontSharedMaterial != null)
+            {
+                text.fontSharedMaterial.shader = originalShader;
+            }
+        }
+    }
+}</code></pre>
+        </section>
+
+        <section class="mb-10">
+            <h2 class="text-2xl font-bold mb-4 flex items-center border-b pb-2"><span class="step-number">6</span> Các Lỗi Thường Gặp (Troubleshooting)</h2>
+            
+            <div class="space-y-4">
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+                    <h4 class="font-bold text-red-700">⚠️ Chữ bị viền sương mờ đục, các ô vuông mờ bao quanh?</h4>
+                    <p class="mt-2 text-red-800">Đây là lỗi <strong>Mất Shader SDF</strong>. Đã được fix trong đoạn code C# ở bước 5. Nguyên tắc là phải lấy <code>shader</code> từ <code>fontSharedMaterial</code> cũ của game gán đè lên material của font mới.</p>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                    <h4 class="font-bold text-blue-700">ℹ️ Hiện ô vuông (Missing Character) dù đã đổi font?</h4>
+                    <p class="mt-2 text-blue-800">Do ở Bước 3 bạn quên nhập đoạn mã dải Unicode Tiếng Việt, hoặc size Atlas quá nhỏ (phải để 4096x4096) khiến font bị tràn và không chứa được các ký tự có dấu.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="mt-12 border-t pt-6 text-center text-gray-500">
+            <p>Chúc bạn thành công với dự án Mod / Việt Hóa của mình!</p>
+            <p class="text-sm mt-2">Ghi chú: Nếu game dùng Font Text cơ bản (không phải TextMeshPro), ở bước 4 bạn chỉ việc gán AssetBundle trực tiếp vào file <code>.ttf</code> gốc và LoadAsset dạng <code>&lt;Font&gt;</code> thay vì <code>&lt;TMP_FontAsset&gt;</code>.</p>
+        </footer>
+    </div>
+
+</body>
+</html>
